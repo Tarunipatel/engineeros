@@ -1,0 +1,30 @@
+export const DSA_TOPICS = [
+  "Arrays",
+  "Strings",
+  "Linked Lists",
+  "Trees",
+  "Graphs",
+  "Heaps",
+  "Binary Search",
+  "Dynamic Programming",
+  "Greedy",
+  "Intervals",
+  "Backtracking",
+] as const;
+
+export const DSA_PATTERNS = [
+  "Two Pointers",
+  "Sliding Window",
+  "Fast & Slow Pointers",
+  "Prefix Sum",
+  "Binary Search",
+  "DFS",
+  "BFS",
+  "Backtracking",
+  "Dynamic Programming",
+  "Greedy",
+  "Union Find",
+  "Top-K / Heap",
+  "Monotonic Stack",
+  "In-order Traversal",
+] as const;
