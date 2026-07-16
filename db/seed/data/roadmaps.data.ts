@@ -7,24 +7,124 @@ export type RoadmapTopicSeed = {
 };
 
 export const SYSTEM_DESIGN_TOPICS: RoadmapTopicSeed[] = [
-  { title: "Client Server Architecture", difficulty: "Beginner", estimatedMinutes: 30 },
-  { title: "DNS", difficulty: "Beginner", estimatedMinutes: 30 },
-  { title: "HTTP", difficulty: "Beginner", estimatedMinutes: 45 },
-  { title: "REST", difficulty: "Beginner", estimatedMinutes: 45 },
-  { title: "Caching", difficulty: "Intermediate", estimatedMinutes: 60 },
-  { title: "Redis", difficulty: "Intermediate", estimatedMinutes: 45 },
-  { title: "CDN", difficulty: "Intermediate", estimatedMinutes: 30 },
-  { title: "Load Balancer", difficulty: "Intermediate", estimatedMinutes: 45 },
-  { title: "Reverse Proxy", difficulty: "Intermediate", estimatedMinutes: 30 },
-  { title: "SQL vs NoSQL", difficulty: "Intermediate", estimatedMinutes: 45 },
-  { title: "Replication", difficulty: "Advanced", estimatedMinutes: 60 },
-  { title: "Sharding", difficulty: "Advanced", estimatedMinutes: 60 },
-  { title: "Kafka", difficulty: "Advanced", estimatedMinutes: 75 },
-  { title: "Rate Limiter", difficulty: "Intermediate", estimatedMinutes: 60 },
-  { title: "Consistent Hashing", difficulty: "Advanced", estimatedMinutes: 60 },
-  { title: "TinyURL Design", difficulty: "Intermediate", estimatedMinutes: 90 },
-  { title: "Notification System Design", difficulty: "Advanced", estimatedMinutes: 90 },
-  { title: "Chat System Design", difficulty: "Advanced", estimatedMinutes: 120 },
+  // Phase 0: Foundations
+  { title: "What is system design?", section: "Phase 0: Foundations", difficulty: "Beginner", estimatedMinutes: 20 },
+  {
+    title: "How does a request travel through a system?",
+    section: "Phase 0: Foundations",
+    difficulty: "Beginner",
+    estimatedMinutes: 25,
+  },
+  {
+    title: "What happens when a user opens a website?",
+    section: "Phase 0: Foundations",
+    difficulty: "Beginner",
+    estimatedMinutes: 25,
+  },
+  { title: "Frontend → Backend → Database", section: "Phase 0: Foundations", difficulty: "Beginner", estimatedMinutes: 20 },
+  {
+    title: "What happens when millions of users use the same application?",
+    section: "Phase 0: Foundations",
+    difficulty: "Beginner",
+    estimatedMinutes: 25,
+  },
+  {
+    title: "What are scalability, availability, reliability, and performance?",
+    section: "Phase 0: Foundations",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+  },
+
+  // Phase 1: Basic Building Blocks
+  { title: "Client-Server Architecture", section: "Phase 1: Basic Building Blocks", difficulty: "Beginner", estimatedMinutes: 30 },
+  { title: "DNS", section: "Phase 1: Basic Building Blocks", difficulty: "Beginner", estimatedMinutes: 30 },
+  { title: "HTTP", section: "Phase 1: Basic Building Blocks", difficulty: "Beginner", estimatedMinutes: 45 },
+  { title: "REST APIs", section: "Phase 1: Basic Building Blocks", difficulty: "Beginner", estimatedMinutes: 45 },
+  {
+    title: "Databases — basic SQL vs NoSQL",
+    section: "Phase 1: Basic Building Blocks",
+    difficulty: "Beginner",
+    estimatedMinutes: 40,
+  },
+  { title: "Database Indexes", section: "Phase 1: Basic Building Blocks", difficulty: "Beginner", estimatedMinutes: 35 },
+  {
+    title: "Vertical vs Horizontal Scaling",
+    section: "Phase 1: Basic Building Blocks",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+  },
+  {
+    title: "Stateless vs Stateful Applications",
+    section: "Phase 1: Basic Building Blocks",
+    difficulty: "Beginner",
+    estimatedMinutes: 25,
+  },
+  { title: "Latency vs Throughput", section: "Phase 1: Basic Building Blocks", difficulty: "Beginner", estimatedMinutes: 25 },
+  {
+    title: "Availability and Reliability",
+    section: "Phase 1: Basic Building Blocks",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+  },
+
+  // Phase 2: Making a System Faster
+  { title: "Caching", section: "Phase 2: Making a System Faster", difficulty: "Intermediate", estimatedMinutes: 45 },
+  { title: "Redis", section: "Phase 2: Making a System Faster", difficulty: "Intermediate", estimatedMinutes: 45 },
+  { title: "CDN", section: "Phase 2: Making a System Faster", difficulty: "Intermediate", estimatedMinutes: 30 },
+  { title: "Reverse Proxy", section: "Phase 2: Making a System Faster", difficulty: "Intermediate", estimatedMinutes: 30 },
+  { title: "Load Balancer", section: "Phase 2: Making a System Faster", difficulty: "Intermediate", estimatedMinutes: 45 },
+  { title: "Rate Limiter", section: "Phase 2: Making a System Faster", difficulty: "Intermediate", estimatedMinutes: 45 },
+
+  // Phase 3: Databases at Scale
+  { title: "Database Indexing", section: "Phase 3: Databases at Scale", difficulty: "Intermediate", estimatedMinutes: 40 },
+  { title: "Replication", section: "Phase 3: Databases at Scale", difficulty: "Intermediate", estimatedMinutes: 45 },
+  { title: "Read Replicas", section: "Phase 3: Databases at Scale", difficulty: "Intermediate", estimatedMinutes: 30 },
+  { title: "Database Partitioning", section: "Phase 3: Databases at Scale", difficulty: "Advanced", estimatedMinutes: 45 },
+  { title: "Sharding", section: "Phase 3: Databases at Scale", difficulty: "Advanced", estimatedMinutes: 60 },
+  {
+    title: "SQL vs NoSQL — deeper comparison",
+    section: "Phase 3: Databases at Scale",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+  },
+  { title: "CAP Theorem", section: "Phase 3: Databases at Scale", difficulty: "Advanced", estimatedMinutes: 45 },
+  {
+    title: "Consistency and Eventual Consistency",
+    section: "Phase 3: Databases at Scale",
+    difficulty: "Advanced",
+    estimatedMinutes: 40,
+  },
+
+  // Phase 4: Distributed Systems
+  { title: "Message Queues", section: "Phase 4: Distributed Systems", difficulty: "Advanced", estimatedMinutes: 45 },
+  { title: "Kafka", section: "Phase 4: Distributed Systems", difficulty: "Advanced", estimatedMinutes: 60 },
+  { title: "Event-Driven Architecture", section: "Phase 4: Distributed Systems", difficulty: "Advanced", estimatedMinutes: 45 },
+  { title: "Idempotency", section: "Phase 4: Distributed Systems", difficulty: "Advanced", estimatedMinutes: 30 },
+  { title: "Distributed Locks", section: "Phase 4: Distributed Systems", difficulty: "Advanced", estimatedMinutes: 40 },
+  { title: "Consistent Hashing", section: "Phase 4: Distributed Systems", difficulty: "Advanced", estimatedMinutes: 45 },
+
+  // Phase 5: System Design Practice
+  { title: "TinyURL", section: "Phase 5: System Design Practice", difficulty: "Intermediate", estimatedMinutes: 90 },
+  { title: "Rate Limiter (design)", section: "Phase 5: System Design Practice", difficulty: "Intermediate", estimatedMinutes: 60 },
+  {
+    title: "Notification System",
+    section: "Phase 5: System Design Practice",
+    difficulty: "Advanced",
+    estimatedMinutes: 90,
+  },
+  {
+    title: "File Storage System",
+    section: "Phase 5: System Design Practice",
+    difficulty: "Advanced",
+    estimatedMinutes: 90,
+  },
+  {
+    title: "News Feed / Instagram",
+    section: "Phase 5: System Design Practice",
+    difficulty: "Advanced",
+    estimatedMinutes: 120,
+  },
+  { title: "Chat System", section: "Phase 5: System Design Practice", difficulty: "Advanced", estimatedMinutes: 120 },
 ];
 
 export const PYTHON_TOPICS: RoadmapTopicSeed[] = [
