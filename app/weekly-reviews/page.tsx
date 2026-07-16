@@ -3,6 +3,7 @@ import { weekRange, formatDate } from "@/lib/date";
 import { Card, CardContent } from "@/components/ui/card";
 import { GenerateReviewButton } from "@/components/weekly-review/generate-review-button";
 import Link from "next/link";
+import { BarChart3 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function WeeklyReviewsPage() {
       <div className="space-y-2">
         {reviews.map((r) => (
           <Link key={r.id} href={`/weekly-reviews/${r.weekStartDate}`}>
-            <Card className="border-border/60 transition-colors hover:bg-accent/30">
+            <Card interactive className="border-border/60">
               <CardContent className="flex items-center justify-between px-4 py-3">
                 <div>
                   <p className="font-medium">
@@ -36,7 +37,12 @@ export default async function WeeklyReviewsPage() {
             </Card>
           </Link>
         ))}
-        {reviews.length === 0 && <p className="py-10 text-center text-sm text-muted-foreground">No reviews yet.</p>}
+        {reviews.length === 0 && (
+          <div className="flex flex-col items-center gap-2 py-12 text-center">
+            <BarChart3 className="h-8 w-8 text-muted-foreground/50" strokeWidth={1.5} />
+            <p className="text-sm text-muted-foreground">No reviews yet.</p>
+          </div>
+        )}
       </div>
     </div>
   );

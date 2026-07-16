@@ -54,7 +54,7 @@ export function RoadmapList({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-border/60 bg-card p-5">
+      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-sm font-medium">{domainLabel} Progress</h2>
           <span className="text-sm text-muted-foreground">
@@ -67,11 +67,14 @@ export function RoadmapList({
       {groups.map((group) => (
         <div key={group.section?.id ?? "flat"} className="space-y-1">
           {group.section && <h3 className="px-1 pb-1 text-sm font-medium text-muted-foreground">{group.section.name}</h3>}
-          <div className="rounded-xl border border-border/60 divide-y divide-border/60">
+          <div className="rounded-2xl border border-border/60 divide-y divide-border/60 shadow-sm">
             {group.topics.map((t) => (
               <div
                 key={t.id}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-accent/30 cursor-pointer"
+                className={cn(
+                  "flex items-center gap-3 border-l-2 border-transparent px-4 py-3 transition-all duration-150 hover:bg-accent/30 cursor-pointer",
+                  t.status === "completed" && "border-accent-green/60 opacity-70"
+                )}
                 onClick={() => setOpenTopic(t)}
               >
                 <div onClick={(e) => e.stopPropagation()}>
@@ -81,7 +84,8 @@ export function RoadmapList({
                   {t.title}
                 </span>
                 {t.status === "in_progress" && (
-                  <Badge variant="outline" className="text-[10px]">
+                  <Badge variant="outline" className="gap-1 text-[10px]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent-orange" />
                     In progress
                   </Badge>
                 )}

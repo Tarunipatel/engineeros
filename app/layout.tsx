@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { BackgroundDecoration } from "@/components/layout/background-decoration";
+import { PageTransition } from "@/components/layout/page-transition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,9 @@ export default function RootLayout({
             <Sidebar />
             <div className="flex min-w-0 flex-1 flex-col">
               <Topbar />
-              <main className="flex-1 overflow-y-auto">{children}</main>
+              <main className="flex-1 overflow-y-auto">
+                <PageTransition>{children}</PageTransition>
+              </main>
             </div>
           </div>
         </Providers>

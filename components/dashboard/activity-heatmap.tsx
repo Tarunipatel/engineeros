@@ -15,10 +15,10 @@ function levelFor(minutes: number) {
 
 const LEVEL_CLASSES = [
   "bg-muted",
-  "bg-primary/25",
-  "bg-primary/45",
-  "bg-primary/70",
-  "bg-primary",
+  "bg-accent-blue/25",
+  "bg-accent-blue/50",
+  "bg-accent-blue/75",
+  "bg-accent-blue",
 ];
 
 export function ActivityHeatmap({ data }: { data: HeatmapDay[] }) {
@@ -39,27 +39,38 @@ export function ActivityHeatmap({ data }: { data: HeatmapDay[] }) {
   if (currentWeek.length > 0) weeks.push(currentWeek);
 
   return (
-    <div className="flex gap-[3px] overflow-x-auto pb-1">
-      {weeks.map((week, wi) => (
-        <div key={wi} className="flex flex-col gap-[3px]">
-          {week.map((day, di) =>
-            day.minutes === -1 ? (
-              <div key={di} className="h-[11px] w-[11px]" />
-            ) : (
-              <Tooltip key={di}>
-                <TooltipTrigger asChild>
-                  <div className={`h-[11px] w-[11px] rounded-[2px] ${LEVEL_CLASSES[levelFor(day.minutes)]}`} />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">
-                    {day.minutes > 0 ? `${day.minutes} min` : "No study"} · {formatDate(day.date)}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            )
-          )}
-        </div>
-      ))}
+    <div className="space-y-2">
+      <div className="flex gap-[3px] overflow-x-auto pb-1">
+        {weeks.map((week, wi) => (
+          <div key={wi} className="flex flex-col gap-[3px]">
+            {week.map((day, di) =>
+              day.minutes === -1 ? (
+                <div key={di} className="h-[11px] w-[11px]" />
+              ) : (
+                <Tooltip key={di}>
+                  <TooltipTrigger asChild>
+                    <div
+                      className={`h-[11px] w-[11px] rounded-[3px] transition-transform duration-100 hover:scale-125 ${LEVEL_CLASSES[levelFor(day.minutes)]}`}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">
+                      {day.minutes > 0 ? `${day.minutes} min` : "No study"} · {formatDate(day.date)}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              )
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-end gap-1 text-[10px] text-muted-foreground">
+        <span>Less</span>
+        {LEVEL_CLASSES.map((cls, i) => (
+          <div key={i} className={`h-[10px] w-[10px] rounded-[2px] ${cls}`} />
+        ))}
+        <span>More</span>
+      </div>
     </div>
   );
 }

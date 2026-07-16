@@ -22,8 +22,8 @@ function ProblemCard({ problem, onOpen }: { problem: ProblemWithRelations; onOpe
       {...attributes}
       onClick={onOpen}
       className={cn(
-        "cursor-grab space-y-1.5 rounded-lg border border-border/60 bg-card p-2.5 text-sm shadow-sm active:cursor-grabbing",
-        isDragging && "opacity-50"
+        "cursor-grab space-y-1.5 rounded-lg border border-border/60 bg-card p-2.5 text-sm shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md active:cursor-grabbing",
+        isDragging && "scale-105 opacity-90 shadow-lifted"
       )}
     >
       <div className="flex items-start justify-between gap-1.5">
@@ -57,8 +57,8 @@ function TopicColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex w-72 shrink-0 flex-col rounded-xl border border-border/60 bg-muted/30 p-2.5",
-        isOver && "ring-2 ring-primary/40"
+        "flex w-72 shrink-0 flex-col rounded-xl border border-border/60 bg-muted/30 p-2.5 transition-all duration-150",
+        isOver && "ring-2 ring-primary/50 bg-primary/5"
       )}
     >
       <div className="mb-2 flex items-center justify-between px-1">

@@ -8,7 +8,7 @@ export function StatCard({
   sublabel,
   icon: Icon,
   className,
-  accent = "text-foreground/80 bg-accent",
+  accent = "text-foreground/80 from-accent to-accent",
 }: {
   label: string;
   value: string;
@@ -18,9 +18,9 @@ export function StatCard({
   accent?: string;
 }) {
   return (
-    <Card className={cn("border-border/60", className)}>
+    <Card className={cn("border-border/60 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md", className)}>
       <CardContent className="flex items-center gap-4 px-5 py-4">
-        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", accent)}>
+        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm", accent)}>
           <Icon className="h-4.5 w-4.5" strokeWidth={1.75} />
         </div>
         <div className="min-w-0">

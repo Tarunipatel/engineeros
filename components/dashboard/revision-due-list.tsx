@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { isOverdue, isToday, formatDate } from "@/lib/date";
 import Link from "next/link";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, CheckCircle2 } from "lucide-react";
 
 type Revision = {
   id: number;
@@ -26,7 +26,10 @@ export function RevisionDueList({ revisions }: { revisions: Revision[] }) {
       </CardHeader>
       <CardContent className="space-y-1 pt-0">
         {revisions.length === 0 && (
-          <p className="py-6 text-center text-sm text-muted-foreground">Nothing due — you&apos;re all caught up.</p>
+          <div className="flex flex-col items-center gap-2 py-8 text-center">
+            <CheckCircle2 className="h-8 w-8 text-accent-green/70" strokeWidth={1.5} />
+            <p className="text-sm text-muted-foreground">Nothing due — you&apos;re all caught up.</p>
+          </div>
         )}
         {revisions.map((r) => {
           const overdue = r.nextRevisionDate ? isOverdue(r.nextRevisionDate) : false;
@@ -35,7 +38,7 @@ export function RevisionDueList({ revisions }: { revisions: Revision[] }) {
             <Link
               key={r.id}
               href="/dsa"
-              className="flex items-center justify-between rounded-md px-2 py-2 text-sm hover:bg-accent/50"
+              className="flex items-center justify-between rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent/50"
             >
               <div className="min-w-0">
                 <p className="truncate font-medium">{r.title}</p>

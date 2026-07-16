@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Clock, ListChecks } from "lucide-react";
+import { Check, Clock, ListChecks, Sparkles, History, CalendarX2 } from "lucide-react";
 import { CATEGORY_LABELS } from "./timer-format";
+import { cn } from "@/lib/utils";
 
 type PlanProblem = { id: number; title: string; kind: string; completed: boolean; topicName: string };
 type Topic = { title: string } | null | undefined;
@@ -45,26 +46,33 @@ export function DayHistoryView({
       <Card className="border-border/60 lg:col-span-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sm font-medium">
-            <ListChecks className="h-4 w-4 text-muted-foreground" />
+            <ListChecks className="h-4 w-4 text-accent-orange" />
             Assigned That Day
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-1">
           {planProblems.map((p) => (
-            <div key={p.id} className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm">
+            <div
+              key={p.id}
+              className={cn(
+                "flex items-center gap-2.5 rounded-lg border-l-2 border-transparent px-2 py-1.5 text-sm",
+                p.completed && "border-accent-green/60 opacity-70"
+              )}
+            >
               {p.completed ? (
-                <Check className="h-4 w-4 text-emerald-500" />
+                <Check className="h-4 w-4 text-accent-green" />
               ) : (
                 <span className="h-4 w-4 rounded-sm border border-border" />
               )}
               <span className={p.completed ? "flex-1" : "flex-1 text-muted-foreground"}>{p.title}</span>
               <Badge variant={p.kind === "revision" ? "outline" : "secondary"} className="text-[10px]">
+                {p.kind === "revision" ? <History className="h-2.5 w-2.5" /> : <Sparkles className="h-2.5 w-2.5" />}
                 {p.kind === "revision" ? "Revision" : "New"}
               </Badge>
             </div>
           ))}
           {domainTopics.map((t) => (
-            <div key={t.label} className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm">
+            <div key={t.label} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm">
               <span className="h-4 w-4 rounded-sm border border-border" />
               <span className="flex-1">{t.title}</span>
               <Badge variant="outline" className="text-[10px]">
@@ -73,7 +81,10 @@ export function DayHistoryView({
             </div>
           ))}
           {planProblems.length === 0 && domainTopics.length === 0 && (
-            <p className="py-6 text-center text-sm text-muted-foreground">Nothing was assigned this day.</p>
+            <div className="flex flex-col items-center gap-2 py-10 text-center">
+              <CalendarX2 className="h-8 w-8 text-muted-foreground/50" strokeWidth={1.5} />
+              <p className="text-sm text-muted-foreground">Nothing was assigned this day.</p>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -82,7 +93,7 @@ export function DayHistoryView({
         <Card className="border-border/60">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Clock className="h-4 w-4 text-accent-blue" />
               Time Studied
             </CardTitle>
           </CardHeader>

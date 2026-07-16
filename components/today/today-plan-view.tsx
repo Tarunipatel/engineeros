@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { togglePlanProblem, toggleRoadmapTopicDone, saveDailyPlanFields } from "@/app/today/actions";
 import { cn } from "@/lib/utils";
-import { ListChecks } from "lucide-react";
+import { ListChecks, Sparkles, History } from "lucide-react";
 
 type PlanProblem = { id: number; problemId: number; title: string; kind: string; completed: boolean; topicName: string };
 type Topic = { id: number; title: string; status: string } | null;
@@ -60,19 +61,29 @@ export function TodayPlanView({
         <CardHeader>
           <CardTitle className="flex items-center justify-between text-sm font-medium">
             <span className="flex items-center gap-2">
-              <ListChecks className="h-4 w-4 text-muted-foreground" />
+              <ListChecks className="h-4 w-4 text-accent-orange" />
               Today&apos;s Tasks
             </span>
             <span className="text-xs font-normal text-muted-foreground">
               {completedCount} / {totalCount} done
             </span>
           </CardTitle>
+          {totalCount > 0 && (
+            <Progress
+              value={(completedCount / totalCount) * 100}
+              className="mt-2 h-1"
+              indicatorClassName="bg-accent-orange"
+            />
+          )}
         </CardHeader>
         <CardContent className="space-y-1">
           {planProblems.map((p) => (
             <label
               key={p.id}
-              className="flex items-center gap-2.5 rounded-md px-2 py-2 text-sm hover:bg-accent/40"
+              className={cn(
+                "group flex items-center gap-2.5 rounded-lg border-l-2 border-transparent px-2 py-2 text-sm transition-all duration-150 hover:translate-x-0.5 hover:bg-accent/40",
+                p.completed && "border-accent-green/60 opacity-60"
+              )}
             >
               <Checkbox
                 checked={p.completed}
@@ -83,12 +94,19 @@ export function TodayPlanView({
               />
               <span className={cn("flex-1", p.completed && "text-muted-foreground line-through")}>{p.title}</span>
               <Badge variant={p.kind === "revision" ? "outline" : "secondary"} className="text-[10px]">
+                {p.kind === "revision" ? <History className="h-2.5 w-2.5" /> : <Sparkles className="h-2.5 w-2.5" />}
                 {p.kind === "revision" ? "Revision" : "New"}
               </Badge>
             </label>
           ))}
           {domainTopics.map((t) => (
-            <label key={t.id} className="flex items-center gap-2.5 rounded-md px-2 py-2 text-sm hover:bg-accent/40">
+            <label
+              key={t.id}
+              className={cn(
+                "group flex items-center gap-2.5 rounded-lg border-l-2 border-transparent px-2 py-2 text-sm transition-all duration-150 hover:translate-x-0.5 hover:bg-accent/40",
+                t.status === "completed" && "border-accent-green/60 opacity-60"
+              )}
+            >
               <Checkbox
                 checked={t.status === "completed"}
                 onCheckedChange={async (checked) => {
@@ -113,48 +131,48 @@ export function TodayPlanView({
       <div className="space-y-4">
         {timerSlot}
 
-      <Card className="border-border/60">
-        <CardHeader>
-          <CardTitle className="text-sm font-medium">Reflections &amp; Notes</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Work Reflection</Label>
-            <Textarea
-              value={workReflectionValue}
-              onChange={(e) => setWorkReflectionValue(e.target.value)}
-              placeholder="What did you learn at work today?"
-              rows={2}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Notes</Label>
-            <Textarea value={notesValue} onChange={(e) => setNotesValue(e.target.value)} rows={2} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">End of Day Reflection</Label>
-            <Textarea
-              value={endOfDayValue}
-              onChange={(e) => setEndOfDayValue(e.target.value)}
-              placeholder="How did today go?"
-              rows={2}
-            />
-          </div>
-          <Button
-            size="sm"
-            onClick={async () => {
-              await saveDailyPlanFields(planId, {
-                workReflection: workReflectionValue,
-                endOfDayReflection: endOfDayValue,
-                notes: notesValue,
-              });
-              router.refresh();
-            }}
-          >
-            Save
-          </Button>
-        </CardContent>
-      </Card>
+        <Card className="border-border/60">
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Reflections &amp; Notes</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Work Reflection</Label>
+              <Textarea
+                value={workReflectionValue}
+                onChange={(e) => setWorkReflectionValue(e.target.value)}
+                placeholder="What did you learn at work today?"
+                rows={2}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Notes</Label>
+              <Textarea value={notesValue} onChange={(e) => setNotesValue(e.target.value)} rows={2} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">End of Day Reflection</Label>
+              <Textarea
+                value={endOfDayValue}
+                onChange={(e) => setEndOfDayValue(e.target.value)}
+                placeholder="How did today go?"
+                rows={2}
+              />
+            </div>
+            <Button
+              size="sm"
+              onClick={async () => {
+                await saveDailyPlanFields(planId, {
+                  workReflection: workReflectionValue,
+                  endOfDayReflection: endOfDayValue,
+                  notes: notesValue,
+                });
+                router.refresh();
+              }}
+            >
+              Save
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

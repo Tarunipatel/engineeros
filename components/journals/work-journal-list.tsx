@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, BookOpenText } from "lucide-react";
 import { WorkJournalEditor } from "./work-journal-editor";
 import { WORK_JOURNAL_TYPE_LABELS } from "./work-journal-types";
 import { searchWorkJournalAction } from "@/app/work-journal/actions";
@@ -53,8 +53,10 @@ export function WorkJournalList({ entries }: { entries: Entry[] }) {
         <button
           onClick={() => setTypeFilter("all")}
           className={cn(
-            "rounded-full border px-2.5 py-1 text-xs",
-            typeFilter === "all" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+            "rounded-full border px-2.5 py-1 text-xs transition-colors duration-150",
+            typeFilter === "all"
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
           )}
         >
           All
@@ -64,8 +66,10 @@ export function WorkJournalList({ entries }: { entries: Entry[] }) {
             key={value}
             onClick={() => setTypeFilter(value as WorkJournalType)}
             className={cn(
-              "rounded-full border px-2.5 py-1 text-xs",
-              typeFilter === value ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+              "rounded-full border px-2.5 py-1 text-xs transition-colors duration-150",
+              typeFilter === value
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
             )}
           >
             {label}
@@ -95,7 +99,12 @@ export function WorkJournalList({ entries }: { entries: Entry[] }) {
             </CardContent>
           </Card>
         ))}
-        {visible.length === 0 && <p className="py-10 text-center text-sm text-muted-foreground">No entries found.</p>}
+        {visible.length === 0 && (
+          <div className="flex flex-col items-center gap-2 py-12 text-center">
+            <BookOpenText className="h-8 w-8 text-muted-foreground/50" strokeWidth={1.5} />
+            <p className="text-sm text-muted-foreground">No entries found.</p>
+          </div>
+        )}
       </div>
 
       <WorkJournalEditor open={creating} onOpenChange={setCreating} />

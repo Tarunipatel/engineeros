@@ -21,7 +21,7 @@ export function QuickNotes() {
           value={quickNotes}
           onChange={(e) => setQuickNotes(e.target.value)}
           placeholder="Jot something down before it slips..."
-          className="min-h-[100px] resize-none border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
+          className="min-h-[100px] resize-none rounded-lg border-none bg-transparent px-0 shadow-none transition-shadow focus-visible:ring-2 focus-visible:ring-accent-yellow/40"
         />
       </CardContent>
     </Card>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, MessageSquareOff } from "lucide-react";
 import { InterviewEntryDialog, type InterviewEntryData } from "./interview-entry-dialog";
 import { formatDate } from "@/lib/date";
 
@@ -31,7 +31,7 @@ export function InterviewJournalList({ entries }: { entries: (InterviewEntryData
       <div className="space-y-2">
         {entries.map((e) => (
           <Link key={e.id} href={`/interview-journal/${e.id}`}>
-            <Card className="border-border/60 transition-colors hover:bg-accent/30">
+            <Card interactive className="border-border/60">
               <CardContent className="flex items-center justify-between px-4 py-3">
                 <div className="min-w-0">
                   <p className="font-medium">
@@ -46,7 +46,12 @@ export function InterviewJournalList({ entries }: { entries: (InterviewEntryData
             </Card>
           </Link>
         ))}
-        {entries.length === 0 && <p className="py-10 text-center text-sm text-muted-foreground">No interviews logged yet.</p>}
+        {entries.length === 0 && (
+          <div className="flex flex-col items-center gap-2 py-12 text-center">
+            <MessageSquareOff className="h-8 w-8 text-muted-foreground/50" strokeWidth={1.5} />
+            <p className="text-sm text-muted-foreground">No interviews logged yet.</p>
+          </div>
+        )}
       </div>
 
       <InterviewEntryDialog open={creating} onOpenChange={setCreating} entry={null} />

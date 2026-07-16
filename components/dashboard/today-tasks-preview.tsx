@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
-import { ListChecks } from "lucide-react";
+import { ListChecks, Sparkles, History } from "lucide-react";
 
 type PlanProblem = { id: number; title: string; kind: string; completed: boolean; topicName: string };
 type Topic = { title: string } | null | undefined;
@@ -42,23 +43,37 @@ export function TodayTasksPreview({
       </CardHeader>
       <CardContent className="space-y-1 pt-0">
         {planProblems.length > 0 && (
-          <p className="px-2 pb-1 text-xs text-muted-foreground">
-            {completedCount} of {planProblems.length} problems done
-          </p>
+          <div className="px-2 pb-2">
+            <p className="mb-1.5 text-xs text-muted-foreground">
+              {completedCount} of {planProblems.length} problems done
+            </p>
+            <Progress
+              value={(completedCount / planProblems.length) * 100}
+              className="h-1"
+              indicatorClassName="bg-accent-green"
+            />
+          </div>
         )}
         {planProblems.slice(0, 4).map((p) => (
-          <div key={p.id} className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm">
+          <div
+            key={p.id}
+            className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-accent/40"
+          >
             <Checkbox checked={p.completed} disabled />
             <span className={p.completed ? "flex-1 truncate text-muted-foreground line-through" : "flex-1 truncate"}>
               {p.title}
             </span>
             <Badge variant={p.kind === "revision" ? "outline" : "secondary"} className="text-[10px]">
+              {p.kind === "revision" ? <History className="h-2.5 w-2.5" /> : <Sparkles className="h-2.5 w-2.5" />}
               {p.kind === "revision" ? "Revision" : "New"}
             </Badge>
           </div>
         ))}
         {topicTasks.map((t) => (
-          <div key={t.label} className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm">
+          <div
+            key={t.label}
+            className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-accent/40"
+          >
             <Checkbox disabled />
             <span className="flex-1 truncate">{t.title}</span>
             <Badge variant="outline" className="text-[10px]">

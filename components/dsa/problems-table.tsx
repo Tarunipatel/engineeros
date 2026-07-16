@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Star, ArrowUpDown, ExternalLink } from "lucide-react";
+import { Star, ArrowUpDown, ExternalLink, SearchX } from "lucide-react";
 import { DsaFilters, type DsaFilterState } from "./dsa-filters";
 import { ProblemDetailSheet } from "./problem-detail-sheet";
 import { STATUS_LABELS, DIFFICULTY_COLORS, type ProblemWithRelations, type Topic } from "./types";
@@ -62,7 +62,7 @@ export function ProblemsTable({ problems, topics }: { problems: ProblemWithRelat
     <div className="space-y-3">
       <DsaFilters filters={filters} onChange={setFilters} topics={topics} />
 
-      <div className="rounded-xl border border-border/60">
+      <div className="rounded-2xl border border-border/60 shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
@@ -101,6 +101,7 @@ export function ProblemsTable({ problems, topics }: { problems: ProblemWithRelat
                         await toggleFavorite(p.id, !p.favorite);
                         router.refresh();
                       }}
+                      className="transition-transform hover:scale-125"
                     >
                       <Star className={cn("h-3.5 w-3.5 text-muted-foreground", p.favorite && "fill-amber-400 text-amber-400")} />
                     </button>
@@ -136,8 +137,11 @@ export function ProblemsTable({ problems, topics }: { problems: ProblemWithRelat
             })}
             {filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">
-                  No problems match these filters.
+                <TableCell colSpan={7} className="py-12">
+                  <div className="flex flex-col items-center gap-2 text-center">
+                    <SearchX className="h-8 w-8 text-muted-foreground/50" strokeWidth={1.5} />
+                    <p className="text-sm text-muted-foreground">No problems match these filters.</p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
