@@ -12,7 +12,7 @@ export default async function CoreCsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Core CS</h1>
         <p className="mt-1 text-sm text-muted-foreground">Operating Systems, Networking, DBMS, and OOP fundamentals.</p>
       </div>
-      <RoadmapList domainLabel="Core CS" sections={sections} topics={topics} path="/core-cs" />
+      <RoadmapList domainLabel="Core CS" sections={sections} topics={topics} path="/core-cs" accent="bg-accent-orange" />
     </div>
   );
 }

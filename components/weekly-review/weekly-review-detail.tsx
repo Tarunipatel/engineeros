@@ -31,11 +31,26 @@ export function WeeklyReviewDetail({ review }: { review: Review }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <StatCard label="Hours" value={`${review.hoursStudied}h`} icon={Clock} />
-        <StatCard label="Problems" value={String(review.problemsSolved)} icon={Code2} />
-        <StatCard label="Topics" value={String(review.topicsFinished)} icon={GraduationCap} />
-        <StatCard label="Applications" value={String(review.applicationsSubmitted)} icon={Briefcase} />
-        <StatCard label="Interviews" value={String(review.interviewsCompleted)} icon={MessageSquareText} />
+        <StatCard label="Hours" value={`${review.hoursStudied}h`} icon={Clock} accent="text-accent-blue bg-accent-blue/10" />
+        <StatCard label="Problems" value={String(review.problemsSolved)} icon={Code2} accent="text-accent-green bg-accent-green/10" />
+        <StatCard
+          label="Topics"
+          value={String(review.topicsFinished)}
+          icon={GraduationCap}
+          accent="text-accent-purple bg-accent-purple/10"
+        />
+        <StatCard
+          label="Applications"
+          value={String(review.applicationsSubmitted)}
+          icon={Briefcase}
+          accent="text-accent-orange bg-accent-orange/10"
+        />
+        <StatCard
+          label="Interviews"
+          value={String(review.interviewsCompleted)}
+          icon={MessageSquareText}
+          accent="text-accent-pink bg-accent-pink/10"
+        />
       </div>
 
       <Card className="border-border/60">

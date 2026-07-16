@@ -28,11 +28,13 @@ export function RoadmapList({
   sections,
   topics,
   path,
+  accent = "bg-primary",
 }: {
   domainLabel: string;
   sections: Section[];
   topics: TopicRow[];
   path: string;
+  accent?: string;
 }) {
   const router = useRouter();
   const [openTopic, setOpenTopic] = useState<TopicRow | null>(null);
@@ -59,7 +61,7 @@ export function RoadmapList({
             {completed} / {topics.length} · {pct}%
           </span>
         </div>
-        <Progress value={pct} className="h-1.5" />
+        <Progress value={pct} className="h-1.5" indicatorClassName={accent} />
       </div>
 
       {groups.map((group) => (

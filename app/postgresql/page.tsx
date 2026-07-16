@@ -12,7 +12,7 @@ export default async function PostgresqlPage() {
         <h1 className="text-2xl font-semibold tracking-tight">PostgreSQL</h1>
         <p className="mt-1 text-sm text-muted-foreground">Query planning, transactions, and scaling fundamentals.</p>
       </div>
-      <RoadmapList domainLabel="PostgreSQL" sections={sections} topics={topics} path="/postgresql" />
+      <RoadmapList domainLabel="PostgreSQL" sections={sections} topics={topics} path="/postgresql" accent="bg-accent-cyan" />
     </div>
   );
 }

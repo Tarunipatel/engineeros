@@ -24,18 +24,18 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/today", label: "Today's Plan", icon: CalendarCheck },
-  { href: "/dsa", label: "DSA", icon: Code2 },
-  { href: "/system-design", label: "System Design", icon: Network },
-  { href: "/python", label: "Python", icon: FileCode2 },
-  { href: "/postgresql", label: "PostgreSQL", icon: Database },
-  { href: "/core-cs", label: "Core CS", icon: BrainCircuit },
-  { href: "/applications", label: "Applications", icon: Briefcase },
-  { href: "/interview-journal", label: "Interview Journal", icon: MessageSquareText },
-  { href: "/work-journal", label: "Work Journal", icon: NotebookPen },
-  { href: "/weekly-reviews", label: "Weekly Reviews", icon: BarChart3 },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/", label: "Dashboard", icon: LayoutDashboard, color: "text-accent-blue" },
+  { href: "/today", label: "Today's Plan", icon: CalendarCheck, color: "text-accent-orange" },
+  { href: "/dsa", label: "DSA", icon: Code2, color: "text-primary" },
+  { href: "/system-design", label: "System Design", icon: Network, color: "text-accent-purple" },
+  { href: "/python", label: "Python", icon: FileCode2, color: "text-accent-green" },
+  { href: "/postgresql", label: "PostgreSQL", icon: Database, color: "text-accent-cyan" },
+  { href: "/core-cs", label: "Core CS", icon: BrainCircuit, color: "text-accent-orange" },
+  { href: "/applications", label: "Applications", icon: Briefcase, color: "text-accent-blue" },
+  { href: "/interview-journal", label: "Interview Journal", icon: MessageSquareText, color: "text-accent-pink" },
+  { href: "/work-journal", label: "Work Journal", icon: NotebookPen, color: "text-accent-yellow" },
+  { href: "/weekly-reviews", label: "Weekly Reviews", icon: BarChart3, color: "text-accent-purple" },
+  { href: "/settings", label: "Settings", icon: Settings, color: "text-muted-foreground" },
 ];
 
 export function Sidebar() {
@@ -67,7 +67,7 @@ export function Sidebar() {
                   : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+              <Icon className={cn("h-4 w-4 shrink-0", item.color)} strokeWidth={1.75} />
               <span className="truncate">{item.label}</span>
             </Link>
           );

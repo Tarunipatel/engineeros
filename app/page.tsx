@@ -27,10 +27,32 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Study Streak" value={`${dashboard.streak}d`} icon={Flame} />
-        <StatCard label="Solved This Week" value={String(dashboard.problemsSolvedThisWeek)} icon={Code2} />
-        <StatCard label="Study Hours" value={`${dashboard.weekHours}h`} sublabel="this week" icon={Clock} />
-        <StatCard label="Applications" value={String(dashboard.applicationsThisWeek)} sublabel="this week" icon={Briefcase} />
+        <StatCard
+          label="Study Streak"
+          value={`${dashboard.streak}d`}
+          icon={Flame}
+          accent={dashboard.streak > 0 ? "text-accent-orange bg-accent-orange/10" : undefined}
+        />
+        <StatCard
+          label="Solved This Week"
+          value={String(dashboard.problemsSolvedThisWeek)}
+          icon={Code2}
+          accent="text-accent-green bg-accent-green/10"
+        />
+        <StatCard
+          label="Study Hours"
+          value={`${dashboard.weekHours}h`}
+          sublabel="this week"
+          icon={Clock}
+          accent="text-accent-blue bg-accent-blue/10"
+        />
+        <StatCard
+          label="Applications"
+          value={String(dashboard.applicationsThisWeek)}
+          sublabel="this week"
+          icon={Briefcase}
+          accent="text-accent-purple bg-accent-purple/10"
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

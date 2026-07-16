@@ -12,7 +12,13 @@ export default async function SystemDesignPage() {
         <h1 className="text-2xl font-semibold tracking-tight">System Design</h1>
         <p className="mt-1 text-sm text-muted-foreground">Roadmap of core system design concepts.</p>
       </div>
-      <RoadmapList domainLabel="System Design" sections={sections} topics={topics} path="/system-design" />
+      <RoadmapList
+        domainLabel="System Design"
+        sections={sections}
+        topics={topics}
+        path="/system-design"
+        accent="bg-accent-purple"
+      />
     </div>
   );
 }

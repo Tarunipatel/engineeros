@@ -8,18 +8,20 @@ export function StatCard({
   sublabel,
   icon: Icon,
   className,
+  accent = "text-foreground/80 bg-accent",
 }: {
   label: string;
   value: string;
   sublabel?: string;
   icon: LucideIcon;
   className?: string;
+  accent?: string;
 }) {
   return (
     <Card className={cn("border-border/60", className)}>
       <CardContent className="flex items-center gap-4 px-5 py-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent">
-          <Icon className="h-4.5 w-4.5 text-foreground/80" strokeWidth={1.75} />
+        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", accent)}>
+          <Icon className="h-4.5 w-4.5" strokeWidth={1.75} />
         </div>
         <div className="min-w-0">
           <p className="text-2xl font-semibold tracking-tight tabular-nums">{value}</p>

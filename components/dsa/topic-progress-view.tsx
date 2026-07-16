@@ -2,8 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { BarChart, Bar, Cell, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import type { TopicStat, DifficultyStat, CompanyStat } from "@/lib/stats";
+
+const DIFFICULTY_BAR_COLORS: Record<string, string> = {
+  Easy: "var(--accent-green)",
+  Medium: "var(--accent-orange)",
+  Hard: "var(--accent-pink)",
+};
 
 export function TopicProgressView({
   topicStats,
@@ -49,8 +55,12 @@ export function TopicProgressView({
                 <Tooltip
                   contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
                 />
-                <Bar dataKey="total" fill="var(--muted-foreground)" radius={[4, 4, 0, 0]} opacity={0.35} name="Total" />
-                <Bar dataKey="solved" fill="var(--primary)" radius={[4, 4, 0, 0]} name="Solved" />
+                <Bar dataKey="total" fill="var(--muted-foreground)" radius={[4, 4, 0, 0]} opacity={0.25} name="Total" />
+                <Bar dataKey="solved" radius={[4, 4, 0, 0]} name="Solved">
+                  {difficultyStats.map((d) => (
+                    <Cell key={d.difficulty} fill={DIFFICULTY_BAR_COLORS[d.difficulty] ?? "var(--primary)"} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -69,7 +79,7 @@ export function TopicProgressView({
                 <Tooltip
                   contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
                 />
-                <Bar dataKey="count" fill="var(--primary)" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="count" fill="var(--accent-blue)" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
