@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { useState } from "react";
 import { CommandPalette } from "@/components/layout/command-palette";
+import { TimerEngine } from "@/components/today/timer-engine";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -16,6 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <TooltipProvider delayDuration={200}>
           {children}
           <CommandPalette />
+          <TimerEngine />
           <Toaster />
         </TooltipProvider>
       </ThemeProvider>

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useCommandPaletteStore } from "@/stores/command-palette-store";
+import { useTimerStore } from "@/stores/timer-store";
+import { CATEGORY_LABELS, formatElapsed } from "@/components/today/timer-format";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -18,6 +20,7 @@ import {
   BarChart3,
   Settings,
   Command,
+  Timer,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -38,6 +41,7 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
   const setCommandPaletteOpen = useCommandPaletteStore((s) => s.setOpen);
+  const { running, elapsedSeconds, category } = useTimerStore();
 
   return (
     <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-border bg-background">
@@ -70,7 +74,19 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="px-3 pb-4 pt-2">
+      <div className="px-3 pb-4 pt-2 space-y-2">
+        {running && (
+          <Link
+            href="/today"
+            className="flex items-center justify-between rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
+          >
+            <span className="flex items-center gap-2">
+              <Timer className="h-3.5 w-3.5 animate-pulse" />
+              {CATEGORY_LABELS[category]}
+            </span>
+            <span className="tabular-nums font-medium">{formatElapsed(elapsedSeconds)}</span>
+          </Link>
+        )}
         <button
           onClick={() => setCommandPaletteOpen(true)}
           className="flex w-full items-center justify-between rounded-md border border-border px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent/60"

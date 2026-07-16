@@ -46,17 +46,41 @@ export async function saveDailyPlanFields(
   revalidatePath("/today");
 }
 
-export async function logStudySession(input: {
+/**
+ * Creates the session row on Start (duration 0) and keeps updating the same
+ * row every ~60s while the timer runs, rather than only writing once on
+ * "Stop & log". A client-side timer only lives in the browser tab — closing
+ * it, letting the laptop sleep, or the tab getting reclaimed by the browser
+ * loses everything not yet sent to the server. Autosaving means the worst
+ * case is losing the last ~60s, not the entire session.
+ */
+export async function upsertStudySession(input: {
+  id?: number;
   durationMinutes: number;
   category: string;
   notes?: string;
 }) {
-  await db.insert(studySessions).values({
-    date: today(),
-    durationMinutes: input.durationMinutes,
-    category: input.category as never,
-    notes: input.notes,
-  });
+  if (input.id) {
+    const [updated] = await db
+      .update(studySessions)
+      .set({ durationMinutes: input.durationMinutes, notes: input.notes })
+      .where(eq(studySessions.id, input.id))
+      .returning();
+    revalidatePath("/today");
+    revalidatePath("/");
+    return updated;
+  }
+
+  const [created] = await db
+    .insert(studySessions)
+    .values({
+      date: today(),
+      durationMinutes: input.durationMinutes,
+      category: input.category as never,
+      notes: input.notes,
+    })
+    .returning();
   revalidatePath("/today");
   revalidatePath("/");
+  return created;
 }

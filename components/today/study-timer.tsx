@@ -1,52 +1,32 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTimerStore } from "@/stores/timer-store";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Play, Pause, Square, Timer as TimerIcon } from "lucide-react";
-import { logStudySession } from "@/app/today/actions";
+import { upsertStudySession } from "@/app/today/actions";
 import { toast } from "sonner";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  dsa: "DSA",
-  system_design: "System Design",
-  python: "Python",
-  postgresql: "PostgreSQL",
-  core_cs: "Core CS",
-  work_journal: "Work Journal",
-  other: "Other",
-};
-
-function formatElapsed(seconds: number) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
-}
+import { CATEGORY_LABELS, formatElapsed } from "./timer-format";
 
 export function StudyTimer() {
   const router = useRouter();
-  const { running, elapsedSeconds, category, setCategory, start, pause, reset, tick } = useTimerStore();
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { running, elapsedSeconds, category, sessionId, setCategory, start, pause, reset, setSessionId } =
+    useTimerStore();
 
-  useEffect(() => {
-    if (running) {
-      intervalRef.current = setInterval(tick, 1000);
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+  const handleStart = async () => {
+    start();
+    if (!sessionId) {
+      const created = await upsertStudySession({ durationMinutes: 0, category });
+      if (created) setSessionId(created.id);
     }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [running, tick]);
+  };
 
   const handleStop = async () => {
     pause();
     const minutes = Math.max(1, Math.round(elapsedSeconds / 60));
-    await logStudySession({ durationMinutes: minutes, category });
+    await upsertStudySession({ id: sessionId ?? undefined, durationMinutes: minutes, category });
     reset();
     toast.success(`Logged ${minutes} min of ${CATEGORY_LABELS[category]}`);
     router.refresh();
@@ -76,7 +56,7 @@ export function StudyTimer() {
         </Select>
         <div className="flex gap-2">
           {!running ? (
-            <Button className="flex-1" size="sm" onClick={start}>
+            <Button className="flex-1" size="sm" onClick={handleStart}>
               <Play className="h-3.5 w-3.5" /> Start
             </Button>
           ) : (
@@ -84,12 +64,7 @@ export function StudyTimer() {
               <Pause className="h-3.5 w-3.5" /> Pause
             </Button>
           )}
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={elapsedSeconds === 0}
-            onClick={handleStop}
-          >
+          <Button size="sm" variant="outline" disabled={elapsedSeconds === 0} onClick={handleStop}>
             <Square className="h-3.5 w-3.5" /> Stop &amp; log
           </Button>
         </div>
