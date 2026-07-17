@@ -23,6 +23,8 @@ type TimerStore = {
  * of which happen constantly in normal use. Persisting means a page reload
  * resumes the running timer from `startedAt` instead of losing it outright.
  */
+const STORE_NAME = "engineeros-timer";
+
 export const useTimerStore = create<TimerStore>()(
   persist(
     (set, get) => ({
@@ -43,6 +45,23 @@ export const useTimerStore = create<TimerStore>()(
       },
       setSessionId: (id) => set({ sessionId: id }),
     }),
-    { name: "engineeros-timer" }
+    { name: STORE_NAME }
   )
 );
+
+/**
+ * Zustand's `persist` middleware only reads localStorage once, at store
+ * creation. If the app is open in two tabs, the tab that was opened first
+ * keeps a stale in-memory snapshot even after the other tab starts the
+ * timer — so its UI still shows "Start"/0:00, and clicking Start there
+ * overwrites the running timer's saved state with a fresh, blank one. This
+ * listens for the other tab's writes and re-syncs this tab's state
+ * immediately, so a second tab never goes stale in the first place.
+ */
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key === STORE_NAME) {
+      useTimerStore.persist.rehydrate();
+    }
+  });
+}

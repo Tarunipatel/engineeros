@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useCommandPaletteStore } from "@/stores/command-palette-store";
 import { useTimerStore } from "@/stores/timer-store";
 import { CATEGORY_LABELS, formatElapsed } from "@/components/today/timer-format";
+import { logout } from "@/app/login/actions";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -21,6 +22,7 @@ import {
   Settings,
   Command,
   Timer,
+  LogOut,
 } from "lucide-react";
 
 // Tailwind statically scans for literal class names, so dynamically building
@@ -156,6 +158,15 @@ export function Sidebar() {
           </span>
           <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[10px]">⌘K</kbd>
         </button>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Sign out
+          </button>
+        </form>
       </div>
     </aside>
   );
