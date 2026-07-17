@@ -8,6 +8,7 @@ const TABS = [
   { href: "/dsa", label: "Table" },
   { href: "/dsa/kanban", label: "Kanban" },
   { href: "/dsa/topics", label: "Topic Progress" },
+  { href: "/dsa/companies", label: "Companies" },
 ];
 
 export function DsaNavTabs() {
@@ -15,7 +16,7 @@ export function DsaNavTabs() {
   return (
     <div className="flex gap-1 border-b border-border">
       {TABS.map((tab) => {
-        const active = pathname === tab.href;
+        const active = tab.href === "/dsa" ? pathname === "/dsa" : pathname.startsWith(tab.href);
         return (
           <Link
             key={tab.href}
