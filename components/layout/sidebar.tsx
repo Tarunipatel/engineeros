@@ -7,6 +7,7 @@ import { useCommandPaletteStore } from "@/stores/command-palette-store";
 import { useTimerStore } from "@/stores/timer-store";
 import { CATEGORY_LABELS, formatElapsed } from "@/components/today/timer-format";
 import { logout } from "@/app/login/actions";
+import { LogoMark } from "@/components/brand/logo-mark";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -116,9 +117,7 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-border bg-background">
       <div className="flex h-14 items-center gap-2 px-5">
-        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-primary to-accent-purple text-primary-foreground text-xs font-semibold shadow-sm">
-          E
-        </div>
+        <LogoMark className="h-6 w-6" textClassName="text-xs" />
         <span className="text-sm font-semibold tracking-tight">EngineerOS</span>
       </div>
 

@@ -10,6 +10,7 @@ import { QuickNotes } from "@/components/dashboard/quick-notes";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { TodayTasksPreview } from "@/components/dashboard/today-tasks-preview";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { Flame, Code2, Clock, Briefcase, Activity as ActivityIcon } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -27,12 +28,15 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-6 py-8">
-      <div>
-        <h1 className="gradient-text text-3xl font-semibold tracking-tight">{greeting()}.</h1>
-        <p className="mt-1.5 text-sm text-foreground/80">{motivationalLine(dashboard.streak)}</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Week of {formatDate(start, "MMM D")} – {formatDate(end, "MMM D")}
-        </p>
+      <div className="flex items-center gap-3.5">
+        <LogoMark className="h-11 w-11 shrink-0 rounded-xl" textClassName="text-lg" />
+        <div>
+          <h1 className="gradient-text text-3xl font-semibold tracking-tight">{greeting()}.</h1>
+          <p className="mt-1.5 text-sm text-foreground/80">{motivationalLine(dashboard.streak)}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Week of {formatDate(start, "MMM D")} – {formatDate(end, "MMM D")}
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
