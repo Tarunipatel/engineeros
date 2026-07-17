@@ -10,6 +10,7 @@ export const DSA_TOPICS = [
   "Greedy",
   "Intervals",
   "Backtracking",
+  "Design",
 ] as const;
 
 export const DSA_PATTERNS = [
@@ -27,4 +28,5 @@ export const DSA_PATTERNS = [
   "Top-K / Heap",
   "Monotonic Stack",
   "In-order Traversal",
+  "Design",
 ] as const;
