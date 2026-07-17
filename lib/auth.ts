@@ -25,6 +25,23 @@ export async function getSessionToken() {
   return hmac(password, `engineeros-session:${email}`);
 }
 
+function timingSafeEqual(a: string, b: string) {
+  const encoded = [encoder.encode(a), encoder.encode(b)];
+  const length = Math.max(encoded[0].length, encoded[1].length, 1);
+  let diff = encoded[0].length ^ encoded[1].length;
+  for (let i = 0; i < length; i++) {
+    diff |= (encoded[0][i] ?? 0) ^ (encoded[1][i] ?? 0);
+  }
+  return diff === 0;
+}
+
+/**
+ * Compares against fixed-length inputs so a plain `===` (which short-circuits
+ * on the first mismatched character) can't leak how many leading characters
+ * of the guess were correct via response-time differences.
+ */
 export function verifyCredentials(email: string, password: string) {
-  return email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD;
+  const emailOk = timingSafeEqual(email, process.env.ADMIN_EMAIL ?? "");
+  const passwordOk = timingSafeEqual(password, process.env.ADMIN_PASSWORD ?? "");
+  return emailOk && passwordOk;
 }

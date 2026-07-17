@@ -24,7 +24,11 @@ export async function login(_prevState: LoginState, formData: FormData): Promise
     path: "/",
   });
 
-  redirect(redirectTo.startsWith("/") ? redirectTo : "/");
+  // A leading "/" alone isn't enough: "//evil.com" or "/\evil.com" also
+  // start with "/" but browsers resolve them as protocol-relative absolute
+  // URLs to an external host, turning this into an open redirect.
+  const isSafeInternalPath = /^\/(?!\/|\\)/.test(redirectTo);
+  redirect(isSafeInternalPath ? redirectTo : "/");
 }
 
 export async function logout() {
