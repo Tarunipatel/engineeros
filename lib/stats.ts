@@ -1,6 +1,6 @@
 import { db } from "@/db/client";
 import { dsaProblems, dsaTopics } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export type TopicStat = {
   topicId: number;
@@ -29,7 +29,7 @@ export async function getTopicStats(): Promise<TopicStat[]> {
       solved: sql<number>`sum(case when ${dsaProblems.status} in ('solved','mastered') then 1 else 0 end)`,
     })
     .from(dsaTopics)
-    .leftJoin(dsaProblems, eq(dsaProblems.topicId, dsaTopics.id))
+    .leftJoin(dsaProblems, and(eq(dsaProblems.topicId, dsaTopics.id), eq(dsaProblems.isCore, true)))
     .groupBy(dsaTopics.id)
     .orderBy(dsaTopics.sortOrder);
   return rows.map((r) => ({ ...r, solved: r.solved ?? 0 }));
@@ -43,12 +43,17 @@ export async function getDifficultyStats(): Promise<DifficultyStat[]> {
       solved: sql<number>`sum(case when ${dsaProblems.status} in ('solved','mastered') then 1 else 0 end)`,
     })
     .from(dsaProblems)
+    .where(eq(dsaProblems.isCore, true))
     .groupBy(dsaProblems.difficulty);
   return rows;
 }
 
-export async function getCompanyStats(): Promise<CompanyStat[]> {
-  const rows = await db.select({ companyTags: dsaProblems.companyTags }).from(dsaProblems);
+/** `includeCompanyExtras` set true shows the full real per-company list (used by /dsa/companies); the core Topic Progress chart stays scoped to the curated set. */
+export async function getCompanyStats(includeCompanyExtras = false): Promise<CompanyStat[]> {
+  const rows = await db
+    .select({ companyTags: dsaProblems.companyTags })
+    .from(dsaProblems)
+    .where(includeCompanyExtras ? undefined : eq(dsaProblems.isCore, true));
   const counts = new Map<string, number>();
   for (const row of rows) {
     for (const company of row.companyTags ?? []) {

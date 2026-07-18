@@ -20,9 +20,12 @@ export async function seedDsa() {
 
   for (let i = 0; i < DSA_PROBLEMS.length; i++) {
     const p = DSA_PROBLEMS[i];
+    const isCore = p.isCore ?? true;
     const mod = i % 5;
-    // 0,1 -> mastered/solved (40%), 2 -> attempted (20%), 3,4 -> not_started (40%)
-    const status = mod === 0 ? "mastered" : mod === 1 ? "solved" : mod === 2 ? "attempted" : "not_started";
+    // 0,1 -> mastered/solved (40%), 2 -> attempted (20%), 3,4 -> not_started (40%).
+    // Company-extra problems always start not_started — the demo progress
+    // distribution only applies to the curated core set.
+    const status = !isCore ? "not_started" : mod === 0 ? "mastered" : mod === 1 ? "solved" : mod === 2 ? "attempted" : "not_started";
 
     let firstAttemptDate: string | null = null;
     let lastAttemptDate: string | null = null;
@@ -64,6 +67,7 @@ export async function seedDsa() {
         topicId: topicIdByName.get(p.topic)!,
         patternId: (p.pattern ? patternIdByName.get(p.pattern) : null) ?? null,
         companyTags: p.companyTags,
+        isCore,
         status,
         favorite: i % 11 === 0,
         timeTakenMinutes,

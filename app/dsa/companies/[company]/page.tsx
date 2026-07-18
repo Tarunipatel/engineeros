@@ -11,7 +11,7 @@ export default async function DsaCompanyPage({ params }: { params: Promise<{ com
   const { company: encodedCompany } = await params;
   const company = decodeURIComponent(encodedCompany);
 
-  const [allProblems, topics] = await Promise.all([getAllProblems(), getTopics()]);
+  const [allProblems, topics] = await Promise.all([getAllProblems(true), getTopics()]);
   const problems = allProblems.filter((p) => p.companyTags.includes(company));
 
   if (problems.length === 0) notFound();

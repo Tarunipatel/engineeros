@@ -3,8 +3,14 @@ import { dsaProblems, dsaTopics, dsaPatterns, dsaAttempts } from "@/db/schema";
 import { asc, desc, eq, lte } from "drizzle-orm";
 import { today } from "../date";
 
-export async function getAllProblems() {
+/**
+ * `includeCompanyExtras` pulls in problems added purely for company-wise
+ * browsing (companies pages) — the core Table/Kanban/Topic Progress views
+ * stay scoped to the curated set by default.
+ */
+export async function getAllProblems(includeCompanyExtras = false) {
   return db.query.dsaProblems.findMany({
+    where: includeCompanyExtras ? undefined : eq(dsaProblems.isCore, true),
     with: { topic: true, pattern: true },
     orderBy: [asc(dsaProblems.topicId), asc(dsaProblems.id)],
   });

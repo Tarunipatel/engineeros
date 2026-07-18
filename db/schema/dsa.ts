@@ -30,6 +30,11 @@ export const dsaProblems = sqliteTable(
       .references(() => dsaTopics.id),
     patternId: integer("pattern_id").references(() => dsaPatterns.id),
     companyTags: text("company_tags", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+    // false for problems added purely for company-wise browsing (not part of
+    // the curated core set) — keeps the main Table/Kanban/Topic Progress
+    // views scoped to the original curriculum while /dsa/companies can still
+    // show the full, real per-company list.
+    isCore: integer("is_core", { mode: "boolean" }).notNull().default(true),
     status: text("status").$type<ProblemStatus>().notNull().default("not_started"),
     favorite: integer("favorite", { mode: "boolean" }).notNull().default(false),
     timeTakenMinutes: integer("time_taken_minutes"),
