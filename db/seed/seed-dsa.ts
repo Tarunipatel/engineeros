@@ -62,7 +62,7 @@ export async function seedDsa() {
         url: p.url,
         difficulty: p.difficulty,
         topicId: topicIdByName.get(p.topic)!,
-        patternId: patternIdByName.get(p.pattern) ?? null,
+        patternId: (p.pattern ? patternIdByName.get(p.pattern) : null) ?? null,
         companyTags: p.companyTags,
         status,
         favorite: i % 11 === 0,
