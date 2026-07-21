@@ -1,10 +1,12 @@
 import { getWorkJournalEntries } from "@/lib/queries/journals";
 import { WorkJournalList } from "@/components/journals/work-journal-list";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function WorkJournalPage() {
-  const entries = await getWorkJournalEntries();
+  const user = await requireAuthenticatedUser();
+  const entries = await getWorkJournalEntries(user.id);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-8">

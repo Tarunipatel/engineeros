@@ -1,11 +1,13 @@
 import { getAllProblems, getTopics } from "@/lib/queries/dsa";
 import { ProblemsKanban } from "@/components/dsa/problems-kanban";
 import { DsaNavTabs } from "@/components/dsa/dsa-nav-tabs";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function DsaKanbanPage() {
-  const [problems, topics] = await Promise.all([getAllProblems(), getTopics()]);
+  const user = await requireAuthenticatedUser();
+  const [problems, topics] = await Promise.all([getAllProblems(user.id), getTopics()]);
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-6 py-8">

@@ -3,31 +3,42 @@
 import { db } from "@/db/client";
 import { dsaProblems, dsaAttempts } from "@/db/schema";
 import type { AttemptResult, Difficulty, ProblemStatus } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { computeNextRevision } from "@/lib/spaced-repetition";
 import { today } from "@/lib/date";
 import { getProblemById } from "@/lib/queries/dsa";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export async function getProblemDetail(id: number) {
-  return getProblemById(id);
+  const user = await requireAuthenticatedUser();
+  return getProblemById(user.id, id);
 }
 
 export async function toggleFavorite(id: number, favorite: boolean) {
-  await db.update(dsaProblems).set({ favorite }).where(eq(dsaProblems.id, id));
+  const user = await requireAuthenticatedUser();
+  await db
+    .update(dsaProblems)
+    .set({ favorite })
+    .where(and(eq(dsaProblems.id, id), eq(dsaProblems.userId, user.id)));
   revalidatePath("/dsa");
 }
 
 export async function updateProblemTopic(id: number, topicId: number) {
-  await db.update(dsaProblems).set({ topicId, updatedAt: new Date().toISOString() }).where(eq(dsaProblems.id, id));
+  const user = await requireAuthenticatedUser();
+  await db
+    .update(dsaProblems)
+    .set({ topicId, updatedAt: new Date().toISOString() })
+    .where(and(eq(dsaProblems.id, id), eq(dsaProblems.userId, user.id)));
   revalidatePath("/dsa/kanban");
 }
 
 export async function updateProblemStatus(id: number, status: ProblemStatus) {
+  const user = await requireAuthenticatedUser();
   await db
     .update(dsaProblems)
     .set({ status, updatedAt: new Date().toISOString() })
-    .where(eq(dsaProblems.id, id));
+    .where(and(eq(dsaProblems.id, id), eq(dsaProblems.userId, user.id)));
   revalidatePath("/dsa");
 }
 
@@ -42,10 +53,11 @@ export async function updateProblemDetails(
     companyTags: string[];
   }>
 ) {
+  const user = await requireAuthenticatedUser();
   await db
     .update(dsaProblems)
     .set({ ...fields, updatedAt: new Date().toISOString() })
-    .where(eq(dsaProblems.id, id));
+    .where(and(eq(dsaProblems.id, id), eq(dsaProblems.userId, user.id)));
   revalidatePath("/dsa");
 }
 
@@ -53,11 +65,16 @@ export async function logAttempt(
   id: number,
   input: { result: AttemptResult; timeTakenMinutes?: number; confidence?: number; notes?: string }
 ) {
-  const [problem] = await db.select().from(dsaProblems).where(eq(dsaProblems.id, id));
+  const user = await requireAuthenticatedUser();
+  const [problem] = await db
+    .select()
+    .from(dsaProblems)
+    .where(and(eq(dsaProblems.id, id), eq(dsaProblems.userId, user.id)));
   if (!problem) return;
 
   const attemptDate = today();
   await db.insert(dsaAttempts).values({
+    userId: user.id,
     problemId: id,
     attemptDate,
     result: input.result,
@@ -108,9 +125,11 @@ export async function createProblem(input: {
   patternId?: number;
   companyTags?: string[];
 }) {
+  const user = await requireAuthenticatedUser();
   const [created] = await db
     .insert(dsaProblems)
     .values({
+      userId: user.id,
       title: input.title,
       platform: input.platform,
       url: input.url,

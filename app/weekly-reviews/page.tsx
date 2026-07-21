@@ -4,11 +4,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { GenerateReviewButton } from "@/components/weekly-review/generate-review-button";
 import Link from "next/link";
 import { BarChart3 } from "lucide-react";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function WeeklyReviewsPage() {
-  const [reviews, currentWeek] = await Promise.all([getAllWeeklyReviews(), getWeeklyReviewByWeekStart(weekRange().start)]);
+  const user = await requireAuthenticatedUser();
+  const [reviews, currentWeek] = await Promise.all([
+    getAllWeeklyReviews(user.id),
+    getWeeklyReviewByWeekStart(user.id, weekRange().start),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-8">

@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { users } from "./users";
 
 export type ApplicationStage =
   | "wishlist"
@@ -13,6 +14,9 @@ export const applications = sqliteTable(
   "applications",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     company: text("company").notNull(),
     role: text("role").notNull(),
     stage: text("stage").$type<ApplicationStage>().notNull().default("wishlist"),
@@ -25,5 +29,5 @@ export const applications = sqliteTable(
     createdAt: text("created_at").notNull().default(sql`(current_timestamp)`),
     updatedAt: text("updated_at").notNull().default(sql`(current_timestamp)`),
   },
-  (table) => [index("idx_applications_stage").on(table.stage)]
+  (table) => [index("idx_applications_stage").on(table.stage), index("idx_applications_user").on(table.userId)]
 );

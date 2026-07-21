@@ -10,7 +10,7 @@ import {
 import { and, gte, lte, sql, eq } from "drizzle-orm";
 import { weekRange } from "./date";
 
-export async function generateWeeklyReview(weekStartDate?: string) {
+export async function generateWeeklyReview(userId: number, weekStartDate?: string) {
   const { start, end } = weekRange(weekStartDate);
 
   const [[hoursRow], [problemsRow], [topicsRow], [applicationsRow], [interviewsRow], [existing]] =
@@ -18,12 +18,13 @@ export async function generateWeeklyReview(weekStartDate?: string) {
       db
         .select({ minutes: sql<number>`coalesce(sum(${studySessions.durationMinutes}), 0)` })
         .from(studySessions)
-        .where(and(gte(studySessions.date, start), lte(studySessions.date, end))),
+        .where(and(eq(studySessions.userId, userId), gte(studySessions.date, start), lte(studySessions.date, end))),
       db
         .select({ count: sql<number>`count(distinct ${dsaAttempts.problemId})` })
         .from(dsaAttempts)
         .where(
           and(
+            eq(dsaAttempts.userId, userId),
             gte(dsaAttempts.attemptDate, start),
             lte(dsaAttempts.attemptDate, end),
             sql`${dsaAttempts.result} in ('solved','optimal')`
@@ -32,19 +33,31 @@ export async function generateWeeklyReview(weekStartDate?: string) {
       db
         .select({ count: sql<number>`count(*)` })
         .from(roadmapTopics)
-        .where(and(gte(roadmapTopics.completedAt, start), lte(roadmapTopics.completedAt, end))),
+        .where(
+          and(eq(roadmapTopics.userId, userId), gte(roadmapTopics.completedAt, start), lte(roadmapTopics.completedAt, end))
+        ),
       db
         .select({ count: sql<number>`count(*)` })
         .from(applications)
-        .where(and(gte(applications.appliedDate, start), lte(applications.appliedDate, end))),
+        .where(and(eq(applications.userId, userId), gte(applications.appliedDate, start), lte(applications.appliedDate, end))),
       db
         .select({ count: sql<number>`count(*)` })
         .from(interviewJournalEntries)
-        .where(and(gte(interviewJournalEntries.date, start), lte(interviewJournalEntries.date, end))),
-      db.select().from(weeklyReviews).where(eq(weeklyReviews.weekStartDate, start)),
+        .where(
+          and(
+            eq(interviewJournalEntries.userId, userId),
+            gte(interviewJournalEntries.date, start),
+            lte(interviewJournalEntries.date, end)
+          )
+        ),
+      db
+        .select()
+        .from(weeklyReviews)
+        .where(and(eq(weeklyReviews.userId, userId), eq(weeklyReviews.weekStartDate, start))),
     ]);
 
   const values = {
+    userId,
     weekStartDate: start,
     weekEndDate: end,
     hoursStudied: Number(((hoursRow?.minutes ?? 0) / 60).toFixed(1)),

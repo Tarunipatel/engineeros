@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { addDays, today } from "../../lib/date";
 
 /** Generates past weeks by running the real aggregation logic against already-seeded data. */
-export async function seedWeeklyReviews() {
+export async function seedWeeklyReviews(userId: number) {
   const wins = [
     "Finally cracked the sliding window pattern cold — solved 3 mediums back to back without hints.",
     "Landed an onsite loop at Google after a strong phone screen.",
@@ -24,7 +24,7 @@ export async function seedWeeklyReviews() {
 
   for (let weeksAgo = 3; weeksAgo >= 1; weeksAgo--) {
     const weekStart = addDays(today(), -weeksAgo * 7);
-    const review = await generateWeeklyReview(weekStart);
+    const review = await generateWeeklyReview(userId, weekStart);
     if (review) {
       await db
         .update(weeklyReviews)

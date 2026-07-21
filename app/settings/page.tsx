@@ -1,18 +1,24 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { settings } from "@/db/schema";
 import { isLocalFileDb } from "@/db/env";
 import { SettingsForm } from "@/components/settings/settings-form";
+import { InviteGenerator } from "@/components/settings/invite-generator";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const [row] = await db.select().from(settings).limit(1);
+  const user = await requireAuthenticatedUser();
+  const [row] = await db.select().from(settings).where(eq(settings.userId, user.id)).limit(1);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-6 py-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Tune your study targets and manage local data.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Signed in as {user.name} ({user.email}). Tune your study targets and manage local data.
+        </p>
       </div>
       <SettingsForm
         settings={{
@@ -24,6 +30,7 @@ export default async function SettingsPage() {
         }}
         canExportDb={isLocalFileDb}
       />
+      <InviteGenerator />
     </div>
   );
 }

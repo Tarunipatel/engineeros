@@ -4,10 +4,12 @@ import { DayHistoryView } from "@/components/today/day-history-view";
 import { DayNav } from "@/components/today/day-nav";
 import { StudyTimer } from "@/components/today/study-timer";
 import { formatDate, today as todayDate } from "@/lib/date";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function TodayPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
+  const user = await requireAuthenticatedUser();
   const { date: requestedDate } = await searchParams;
   const date = requestedDate ?? todayDate();
   const isToday = date === todayDate();
@@ -24,7 +26,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
 
   if (isToday) {
     const { plan, planProblems, systemDesignTopic, pythonTopic, postgresqlTopic, coreCsTopic } =
-      await getTodayPlanWithDetails();
+      await getTodayPlanWithDetails(user.id);
 
     return (
       <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
@@ -45,7 +47,10 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
     );
   }
 
-  const [existing, activity] = await Promise.all([getExistingDayPlanWithDetails(date), getDayActivitySummary(date)]);
+  const [existing, activity] = await Promise.all([
+    getExistingDayPlanWithDetails(user.id, date),
+    getDayActivitySummary(user.id, date),
+  ]);
 
   if (!existing && activity.sessions.length === 0 && activity.attempts.length === 0) {
     return (

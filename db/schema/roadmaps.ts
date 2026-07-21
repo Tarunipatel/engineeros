@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { users } from "./users";
 
 export type RoadmapDomainKey = "system_design" | "python" | "postgresql" | "core_cs";
 export type RoadmapDifficulty = "Beginner" | "Intermediate" | "Advanced";
@@ -29,6 +30,9 @@ export const roadmapTopics = sqliteTable(
   "roadmap_topics",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     domainId: integer("domain_id")
       .notNull()
       .references(() => roadmapDomains.id),
@@ -45,5 +49,6 @@ export const roadmapTopics = sqliteTable(
   (table) => [
     index("idx_roadmap_topics_domain").on(table.domainId),
     index("idx_roadmap_topics_status").on(table.status),
+    index("idx_roadmap_topics_user").on(table.userId),
   ]
 );

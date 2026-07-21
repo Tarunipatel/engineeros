@@ -1,15 +1,23 @@
 import { db } from "@/db/client";
 import { roadmapDomains, roadmapSections, roadmapTopics } from "@/db/schema";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import type { RoadmapDomainKey } from "@/db/schema";
 
-export async function getRoadmapByDomain(key: RoadmapDomainKey) {
+export async function getRoadmapByDomain(userId: number, key: RoadmapDomainKey) {
   const domain = await db.query.roadmapDomains.findFirst({ where: eq(roadmapDomains.key, key) });
   if (!domain) return { domain: null, sections: [], topics: [] };
 
   const [sections, topics] = await Promise.all([
-    db.select().from(roadmapSections).where(eq(roadmapSections.domainId, domain.id)).orderBy(asc(roadmapSections.sortOrder)),
-    db.select().from(roadmapTopics).where(eq(roadmapTopics.domainId, domain.id)).orderBy(asc(roadmapTopics.sortOrder)),
+    db
+      .select()
+      .from(roadmapSections)
+      .where(eq(roadmapSections.domainId, domain.id))
+      .orderBy(asc(roadmapSections.sortOrder)),
+    db
+      .select()
+      .from(roadmapTopics)
+      .where(and(eq(roadmapTopics.userId, userId), eq(roadmapTopics.domainId, domain.id)))
+      .orderBy(asc(roadmapTopics.sortOrder)),
   ]);
 
   return { domain, sections, topics };

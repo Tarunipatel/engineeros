@@ -1,12 +1,14 @@
 import { getInterviewJournalEntry } from "@/lib/queries/journals";
 import { InterviewDetailView } from "@/components/journals/interview-detail-view";
 import { notFound } from "next/navigation";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function InterviewJournalDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const entry = await getInterviewJournalEntry(Number(id));
+  const user = await requireAuthenticatedUser();
+  const entry = await getInterviewJournalEntry(user.id, Number(id));
   if (!entry) notFound();
 
   return (

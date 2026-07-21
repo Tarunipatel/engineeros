@@ -3,11 +3,16 @@
 import { db } from "@/db/client";
 import { applications } from "@/db/schema";
 import type { ApplicationStage } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export async function updateApplicationStage(id: number, stage: ApplicationStage) {
-  await db.update(applications).set({ stage, updatedAt: new Date().toISOString() }).where(eq(applications.id, id));
+  const user = await requireAuthenticatedUser();
+  await db
+    .update(applications)
+    .set({ stage, updatedAt: new Date().toISOString() })
+    .where(and(eq(applications.id, id), eq(applications.userId, user.id)));
   revalidatePath("/applications");
 }
 
@@ -21,9 +26,11 @@ export async function createApplication(input: {
   salary?: string;
   notes?: string;
 }) {
+  const user = await requireAuthenticatedUser();
   const [created] = await db
     .insert(applications)
     .values({
+      userId: user.id,
       company: input.company,
       role: input.role,
       stage: input.stage ?? "wishlist",
@@ -50,9 +57,10 @@ export async function updateApplication(
     notes: string;
   }>
 ) {
+  const user = await requireAuthenticatedUser();
   await db
     .update(applications)
     .set({ ...fields, updatedAt: new Date().toISOString() })
-    .where(eq(applications.id, id));
+    .where(and(eq(applications.id, id), eq(applications.userId, user.id)));
   revalidatePath("/applications");
 }

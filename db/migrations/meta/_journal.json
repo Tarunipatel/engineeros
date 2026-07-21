@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1784457266129,
+      "tag": "0000_add_users_sessions_invites",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1784458336259,
+      "tag": "0001_add_user_ownership",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1784486684520,
+      "tag": "0002_make_user_ownership_required",
+      "breakpoints": true
+    }
+  ]
+}

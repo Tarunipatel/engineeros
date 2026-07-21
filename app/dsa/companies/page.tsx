@@ -3,11 +3,13 @@ import { getCompanyStats } from "@/lib/stats";
 import { DsaNavTabs } from "@/components/dsa/dsa-nav-tabs";
 import { Card } from "@/components/ui/card";
 import { Building2 } from "lucide-react";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function DsaCompaniesPage() {
-  const companies = await getCompanyStats(true);
+  const user = await requireAuthenticatedUser();
+  const companies = await getCompanyStats(user.id, true);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-6 py-8">

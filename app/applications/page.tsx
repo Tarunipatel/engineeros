@@ -1,10 +1,12 @@
 import { getAllApplications } from "@/lib/queries/applications";
 import { ApplicationsKanban } from "@/components/applications/applications-kanban";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function ApplicationsPage() {
-  const applications = await getAllApplications();
+  const user = await requireAuthenticatedUser();
+  const applications = await getAllApplications(user.id);
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-6 py-8">

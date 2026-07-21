@@ -20,7 +20,7 @@ export type CompanyStat = {
   count: number;
 };
 
-export async function getTopicStats(): Promise<TopicStat[]> {
+export async function getTopicStats(userId: number): Promise<TopicStat[]> {
   const rows = await db
     .select({
       topicId: dsaTopics.id,
@@ -29,13 +29,16 @@ export async function getTopicStats(): Promise<TopicStat[]> {
       solved: sql<number>`sum(case when ${dsaProblems.status} in ('solved','mastered') then 1 else 0 end)`,
     })
     .from(dsaTopics)
-    .leftJoin(dsaProblems, and(eq(dsaProblems.topicId, dsaTopics.id), eq(dsaProblems.isCore, true)))
+    .leftJoin(
+      dsaProblems,
+      and(eq(dsaProblems.topicId, dsaTopics.id), eq(dsaProblems.isCore, true), eq(dsaProblems.userId, userId))
+    )
     .groupBy(dsaTopics.id)
     .orderBy(dsaTopics.sortOrder);
   return rows.map((r) => ({ ...r, solved: r.solved ?? 0 }));
 }
 
-export async function getDifficultyStats(): Promise<DifficultyStat[]> {
+export async function getDifficultyStats(userId: number): Promise<DifficultyStat[]> {
   const rows = await db
     .select({
       difficulty: dsaProblems.difficulty,
@@ -43,17 +46,17 @@ export async function getDifficultyStats(): Promise<DifficultyStat[]> {
       solved: sql<number>`sum(case when ${dsaProblems.status} in ('solved','mastered') then 1 else 0 end)`,
     })
     .from(dsaProblems)
-    .where(eq(dsaProblems.isCore, true))
+    .where(and(eq(dsaProblems.isCore, true), eq(dsaProblems.userId, userId)))
     .groupBy(dsaProblems.difficulty);
   return rows;
 }
 
 /** `includeCompanyExtras` set true shows the full real per-company list (used by /dsa/companies); the core Topic Progress chart stays scoped to the curated set. */
-export async function getCompanyStats(includeCompanyExtras = false): Promise<CompanyStat[]> {
+export async function getCompanyStats(userId: number, includeCompanyExtras = false): Promise<CompanyStat[]> {
   const rows = await db
     .select({ companyTags: dsaProblems.companyTags })
     .from(dsaProblems)
-    .where(includeCompanyExtras ? undefined : eq(dsaProblems.isCore, true));
+    .where(includeCompanyExtras ? eq(dsaProblems.userId, userId) : and(eq(dsaProblems.isCore, true), eq(dsaProblems.userId, userId)));
   const counts = new Map<string, number>();
   for (const row of rows) {
     for (const company of row.companyTags ?? []) {

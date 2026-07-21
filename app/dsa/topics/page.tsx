@@ -1,14 +1,16 @@
 import { getTopicStats, getDifficultyStats, getCompanyStats } from "@/lib/stats";
 import { TopicProgressView } from "@/components/dsa/topic-progress-view";
 import { DsaNavTabs } from "@/components/dsa/dsa-nav-tabs";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function DsaTopicsPage() {
+  const user = await requireAuthenticatedUser();
   const [topicStats, difficultyStats, companyStats] = await Promise.all([
-    getTopicStats(),
-    getDifficultyStats(),
-    getCompanyStats(),
+    getTopicStats(user.id),
+    getDifficultyStats(user.id),
+    getCompanyStats(user.id),
   ]);
 
   return (

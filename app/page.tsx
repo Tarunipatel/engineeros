@@ -11,6 +11,7 @@ import { QuickActions } from "@/components/dashboard/quick-actions";
 import { TodayTasksPreview } from "@/components/dashboard/today-tasks-preview";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { LogoMark } from "@/components/brand/logo-mark";
+import { requireAuthenticatedUser } from "@/lib/session";
 import { Flame, Code2, Clock, Briefcase, Activity as ActivityIcon } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,8 @@ function motivationalLine(streak: number) {
 }
 
 export default async function DashboardPage() {
-  const [dashboard, todayPlan] = await Promise.all([getDashboardData(), getTodayPlanWithDetails()]);
+  const user = await requireAuthenticatedUser();
+  const [dashboard, todayPlan] = await Promise.all([getDashboardData(user.id), getTodayPlanWithDetails(user.id)]);
   const { start, end } = weekRange();
 
   return (

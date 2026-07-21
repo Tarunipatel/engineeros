@@ -3,10 +3,11 @@ import { applications } from "../schema";
 import { APPLICATIONS } from "./data/applications.data";
 import { addDays, today } from "../../lib/date";
 
-export async function seedApplications() {
+export async function seedApplications(userId: number) {
   for (let i = 0; i < APPLICATIONS.length; i++) {
     const a = APPLICATIONS[i];
     await db.insert(applications).values({
+      userId,
       company: a.company,
       role: a.role,
       stage: a.stage,

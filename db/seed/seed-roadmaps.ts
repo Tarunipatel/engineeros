@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { db } from "../client";
 import { roadmapDomains, roadmapSections, roadmapTopics } from "../schema";
 import type { RoadmapDomainKey, RoadmapStatus } from "../schema";
@@ -25,27 +26,39 @@ function statusFor(index: number, total: number): RoadmapStatus {
   return "not_started";
 }
 
-export async function seedRoadmaps() {
+/**
+ * Seeds a personal copy of every roadmap domain's topics for one user.
+ * roadmap_domains/roadmap_sections are shared taxonomy, not per-user —
+ * reused if they already exist so this is safe to call once per new user.
+ * `withDemoProgress` fabricates a realistic completion gradient — used
+ * only for the original bootstrap account; real new signups start with
+ * everything not_started.
+ */
+export async function seedRoadmaps(userId: number, withDemoProgress: boolean) {
   for (const domainDef of DOMAINS) {
-    const [domain] = await db
-      .insert(roadmapDomains)
-      .values({ key: domainDef.key, label: domainDef.label })
-      .returning();
+    let [domain] = await db.select().from(roadmapDomains).where(eq(roadmapDomains.key, domainDef.key)).limit(1);
+    if (!domain) {
+      [domain] = await db.insert(roadmapDomains).values({ key: domainDef.key, label: domainDef.label }).returning();
+    }
 
-    const sectionIdByName = new Map<string, number>();
+    const existingSections = await db.select().from(roadmapSections).where(eq(roadmapSections.domainId, domain.id));
+    const sectionIdByName = new Map(existingSections.map((s) => [s.name, s.id]));
+
     const sectionNames = Array.from(new Set(domainDef.topics.map((t) => t.section).filter(Boolean))) as string[];
     for (let i = 0; i < sectionNames.length; i++) {
+      if (sectionIdByName.has(sectionNames[i])) continue;
       const [section] = await db
         .insert(roadmapSections)
-        .values({ domainId: domain.id, name: sectionNames[i], sortOrder: i })
+        .values({ domainId: domain.id, name: sectionNames[i], sortOrder: existingSections.length + i })
         .returning();
       sectionIdByName.set(sectionNames[i], section.id);
     }
 
     for (let i = 0; i < domainDef.topics.length; i++) {
       const t = domainDef.topics[i];
-      const status = statusFor(i, domainDef.topics.length);
+      const status = withDemoProgress ? statusFor(i, domainDef.topics.length) : "not_started";
       await db.insert(roadmapTopics).values({
+        userId,
         domainId: domain.id,
         sectionId: t.section ? sectionIdByName.get(t.section) : null,
         title: t.title,

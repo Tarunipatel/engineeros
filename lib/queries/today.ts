@@ -1,6 +1,6 @@
 import { db } from "@/db/client";
 import { dailyPlanProblems, dailyPlans, dsaProblems, dsaTopics, studySessions, dsaAttempts } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { getOrGenerateDailyPlan } from "../today-plan";
 
 async function getPlanDetails(resolvedPlan: typeof dailyPlans.$inferSelect) {
@@ -36,8 +36,8 @@ async function getPlanDetails(resolvedPlan: typeof dailyPlans.$inferSelect) {
   return { plan: resolvedPlan, systemDesignTopic, pythonTopic, postgresqlTopic, coreCsTopic, planProblems };
 }
 
-export async function getTodayPlanWithDetails(date?: string) {
-  const resolvedPlan = await getOrGenerateDailyPlan(date);
+export async function getTodayPlanWithDetails(userId: number, date?: string) {
+  const resolvedPlan = await getOrGenerateDailyPlan(userId, date);
   return getPlanDetails(resolvedPlan);
 }
 
@@ -46,15 +46,20 @@ export async function getTodayPlanWithDetails(date?: string) {
  * date you never actually opened the app on should show "nothing recorded",
  * not silently create a brand-new plan assigning fresh problems retroactively.
  */
-export async function getExistingDayPlanWithDetails(date: string) {
-  const existing = await db.query.dailyPlans.findFirst({ where: (dp, { eq }) => eq(dp.date, date) });
+export async function getExistingDayPlanWithDetails(userId: number, date: string) {
+  const existing = await db.query.dailyPlans.findFirst({
+    where: (dp, { eq, and }) => and(eq(dp.userId, userId), eq(dp.date, date)),
+  });
   if (!existing) return null;
   return getPlanDetails(existing);
 }
 
-export async function getDayActivitySummary(date: string) {
+export async function getDayActivitySummary(userId: number, date: string) {
   const [sessions, attempts, [totals]] = await Promise.all([
-    db.select().from(studySessions).where(eq(studySessions.date, date)),
+    db
+      .select()
+      .from(studySessions)
+      .where(and(eq(studySessions.userId, userId), eq(studySessions.date, date))),
     db
       .select({
         id: dsaAttempts.id,
@@ -65,11 +70,11 @@ export async function getDayActivitySummary(date: string) {
       })
       .from(dsaAttempts)
       .innerJoin(dsaProblems, eq(dsaAttempts.problemId, dsaProblems.id))
-      .where(eq(dsaAttempts.attemptDate, date)),
+      .where(and(eq(dsaAttempts.userId, userId), eq(dsaAttempts.attemptDate, date))),
     db
       .select({ minutes: sql<number>`coalesce(sum(${studySessions.durationMinutes}), 0)` })
       .from(studySessions)
-      .where(eq(studySessions.date, date)),
+      .where(and(eq(studySessions.userId, userId), eq(studySessions.date, date))),
   ]);
 
   return { sessions, attempts, totalMinutes: totals?.minutes ?? 0 };

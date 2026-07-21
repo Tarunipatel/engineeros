@@ -1,9 +1,18 @@
 import { relations } from "drizzle-orm";
+import { users, sessions } from "./users";
 import { dsaTopics, dsaPatterns, dsaProblems, dsaAttempts } from "./dsa";
 import { roadmapDomains, roadmapSections, roadmapTopics } from "./roadmaps";
 import { dailyPlans, dailyPlanProblems, studySessions } from "./daily";
 import { applications } from "./applications";
 import { interviewJournalEntries } from "./journals";
+
+export const usersRelations = relations(users, ({ many }) => ({
+  sessions: many(sessions),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
 
 export const dsaTopicsRelations = relations(dsaTopics, ({ many }) => ({
   problems: many(dsaProblems),

@@ -1,10 +1,12 @@
 import { getRoadmapByDomain } from "@/lib/queries/roadmaps";
 import { RoadmapList } from "@/components/roadmaps/roadmap-list";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function CoreCsPage() {
-  const { sections, topics } = await getRoadmapByDomain("core_cs");
+  const user = await requireAuthenticatedUser();
+  const { sections, topics } = await getRoadmapByDomain(user.id, "core_cs");
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-8">

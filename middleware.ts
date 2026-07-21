@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { AUTH_COOKIE, getSessionToken } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/session";
+
+// Session lookups hit the database (real per-user sessions, not a stateless
+// token), which needs Node's runtime — the local dev DB is a file-based
+// SQLite that Edge can't touch anyway.
+export const runtime = "nodejs";
 
 export async function middleware(request: NextRequest) {
-  const cookie = request.cookies.get(AUTH_COOKIE)?.value;
-  const expected = await getSessionToken();
-
-  if (cookie === expected) return NextResponse.next();
+  const user = await getCurrentUser();
+  if (user) return NextResponse.next();
 
   const url = request.nextUrl.clone();
   url.pathname = "/login";
@@ -15,5 +18,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!login|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|icon|apple-icon).*)"],
+  matcher: [
+    "/((?!login|register|api/admin/migrate-production|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|icon|apple-icon).*)",
+  ],
 };

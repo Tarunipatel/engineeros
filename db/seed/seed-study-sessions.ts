@@ -9,7 +9,7 @@ const CATEGORIES = ["dsa", "system_design", "python", "postgresql", "core_cs", "
  * real variation, but keeps the most recent several days consecutive so the
  * app opens with a nonzero current streak.
  */
-export async function seedStudySessions() {
+export async function seedStudySessions(userId: number) {
   const totalDays = 50;
   const rows: (typeof studySessions.$inferInsert)[] = [];
 
@@ -27,6 +27,7 @@ export async function seedStudySessions() {
       const category = CATEGORIES[(i + s) % CATEGORIES.length];
       const durationMinutes = 30 + ((i * 7 + s * 13) % 90);
       rows.push({
+        userId,
         date,
         durationMinutes,
         category,

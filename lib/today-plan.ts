@@ -6,33 +6,43 @@ import { today } from "./date";
 
 const NEW_PROBLEMS_PER_DAY = 2;
 
-async function nextIncompleteTopicId(domainKey: RoadmapDomainKey): Promise<number | null> {
+async function nextIncompleteTopicId(userId: number, domainKey: RoadmapDomainKey): Promise<number | null> {
   const [domain] = await db.select().from(roadmapDomains).where(eq(roadmapDomains.key, domainKey));
   if (!domain) return null;
   const [topic] = await db
     .select()
     .from(roadmapTopics)
-    .where(and(eq(roadmapTopics.domainId, domain.id), or(eq(roadmapTopics.status, "not_started"), eq(roadmapTopics.status, "in_progress"))))
+    .where(
+      and(
+        eq(roadmapTopics.userId, userId),
+        eq(roadmapTopics.domainId, domain.id),
+        or(eq(roadmapTopics.status, "not_started"), eq(roadmapTopics.status, "in_progress"))
+      )
+    )
     .orderBy(asc(roadmapTopics.sortOrder))
     .limit(1);
   return topic?.id ?? null;
 }
 
 /** Idempotent: returns the existing plan for `date`, generating it on first visit. */
-export async function getOrGenerateDailyPlan(date: string = today()) {
-  const [existing] = await db.select().from(dailyPlans).where(eq(dailyPlans.date, date));
+export async function getOrGenerateDailyPlan(userId: number, date: string = today()) {
+  const [existing] = await db
+    .select()
+    .from(dailyPlans)
+    .where(and(eq(dailyPlans.userId, userId), eq(dailyPlans.date, date)));
   if (existing) return existing;
 
   const [systemDesignTopicId, pythonTopicId, postgresqlTopicId, coreCsTopicId] = await Promise.all([
-    nextIncompleteTopicId("system_design"),
-    nextIncompleteTopicId("python"),
-    nextIncompleteTopicId("postgresql"),
-    nextIncompleteTopicId("core_cs"),
+    nextIncompleteTopicId(userId, "system_design"),
+    nextIncompleteTopicId(userId, "python"),
+    nextIncompleteTopicId(userId, "postgresql"),
+    nextIncompleteTopicId(userId, "core_cs"),
   ]);
 
   const [created] = await db
     .insert(dailyPlans)
     .values({
+      userId,
       date,
       systemDesignTopicId,
       pythonTopicId,
@@ -44,19 +54,19 @@ export async function getOrGenerateDailyPlan(date: string = today()) {
   const revisionDue = await db
     .select({ id: dsaProblems.id })
     .from(dsaProblems)
-    .where(lte(dsaProblems.nextRevisionDate, date))
+    .where(and(eq(dsaProblems.userId, userId), lte(dsaProblems.nextRevisionDate, date)))
     .limit(10);
 
   const newProblems = await db
     .select({ id: dsaProblems.id })
     .from(dsaProblems)
-    .where(eq(dsaProblems.status, "not_started"))
+    .where(and(eq(dsaProblems.userId, userId), eq(dsaProblems.status, "not_started")))
     .orderBy(asc(dsaProblems.topicId))
     .limit(NEW_PROBLEMS_PER_DAY);
 
   const rows = [
-    ...revisionDue.map((p) => ({ dailyPlanId: created.id, problemId: p.id, kind: "revision" as const })),
-    ...newProblems.map((p) => ({ dailyPlanId: created.id, problemId: p.id, kind: "new" as const })),
+    ...revisionDue.map((p) => ({ userId, dailyPlanId: created.id, problemId: p.id, kind: "revision" as const })),
+    ...newProblems.map((p) => ({ userId, dailyPlanId: created.id, problemId: p.id, kind: "new" as const })),
   ];
 
   if (rows.length > 0) {

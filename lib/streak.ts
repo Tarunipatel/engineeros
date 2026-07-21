@@ -1,16 +1,17 @@
 import { db } from "@/db/client";
 import { studySessions } from "@/db/schema";
-import { gte, sql } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 import dayjs from "dayjs";
 import { addDays, today } from "./date";
 
 export type HeatmapDay = { date: string; minutes: number };
 
 /** Consecutive days (walking back from today) with at least one study session. */
-export async function computeStreak(): Promise<number> {
+export async function computeStreak(userId: number): Promise<number> {
   const rows = await db
     .select({ date: studySessions.date, minutes: sql<number>`sum(${studySessions.durationMinutes})` })
     .from(studySessions)
+    .where(eq(studySessions.userId, userId))
     .groupBy(studySessions.date);
 
   const daysWithActivity = new Set(rows.filter((r) => r.minutes > 0).map((r) => r.date));
@@ -28,12 +29,12 @@ export async function computeStreak(): Promise<number> {
   return streak;
 }
 
-export async function computeHeatmapData(days = 182): Promise<HeatmapDay[]> {
+export async function computeHeatmapData(userId: number, days = 182): Promise<HeatmapDay[]> {
   const start = addDays(today(), -days);
   const rows = await db
     .select({ date: studySessions.date, minutes: sql<number>`sum(${studySessions.durationMinutes})` })
     .from(studySessions)
-    .where(gte(studySessions.date, start))
+    .where(and(eq(studySessions.userId, userId), gte(studySessions.date, start)))
     .groupBy(studySessions.date);
 
   const map = new Map(rows.map((r) => [r.date, r.minutes]));

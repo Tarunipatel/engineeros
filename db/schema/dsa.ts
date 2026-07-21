@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, integer, real, index } from "drizzle-orm/sqlite-core";
+import { users } from "./users";
 
 export type Difficulty = "Easy" | "Medium" | "Hard";
 export type ProblemStatus = "not_started" | "attempted" | "solved" | "mastered";
@@ -21,6 +22,9 @@ export const dsaProblems = sqliteTable(
   "dsa_problems",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     platform: text("platform").notNull().default("LeetCode"),
     url: text("url"),
@@ -54,6 +58,7 @@ export const dsaProblems = sqliteTable(
     index("idx_dsa_problems_topic").on(table.topicId),
     index("idx_dsa_problems_next_revision").on(table.nextRevisionDate),
     index("idx_dsa_problems_difficulty").on(table.difficulty),
+    index("idx_dsa_problems_user").on(table.userId),
   ]
 );
 
@@ -61,6 +66,9 @@ export const dsaAttempts = sqliteTable(
   "dsa_attempts",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     problemId: integer("problem_id")
       .notNull()
       .references(() => dsaProblems.id, { onDelete: "cascade" }),
@@ -74,5 +82,6 @@ export const dsaAttempts = sqliteTable(
   (table) => [
     index("idx_dsa_attempts_problem").on(table.problemId),
     index("idx_dsa_attempts_date").on(table.attemptDate),
+    index("idx_dsa_attempts_user").on(table.userId),
   ]
 );

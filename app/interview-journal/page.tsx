@@ -1,10 +1,12 @@
 import { getInterviewJournalEntries } from "@/lib/queries/journals";
 import { InterviewJournalList } from "@/components/journals/interview-journal-list";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function InterviewJournalPage() {
-  const entries = await getInterviewJournalEntries();
+  const user = await requireAuthenticatedUser();
+  const entries = await getInterviewJournalEntries(user.id);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-8">

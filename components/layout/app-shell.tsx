@@ -8,7 +8,7 @@ import { PageTransition } from "./page-transition";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname === "/login") {
+  if (pathname === "/login" || pathname === "/register") {
     return <main className="h-full overflow-y-auto">{children}</main>;
   }
 

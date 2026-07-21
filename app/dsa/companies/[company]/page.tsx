@@ -4,6 +4,7 @@ import { getAllProblems, getTopics } from "@/lib/queries/dsa";
 import { ProblemsTable } from "@/components/dsa/problems-table";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { requireAuthenticatedUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,8 @@ export default async function DsaCompanyPage({ params }: { params: Promise<{ com
   const { company: encodedCompany } = await params;
   const company = decodeURIComponent(encodedCompany);
 
-  const [allProblems, topics] = await Promise.all([getAllProblems(true), getTopics()]);
+  const user = await requireAuthenticatedUser();
+  const [allProblems, topics] = await Promise.all([getAllProblems(user.id, true), getTopics()]);
   const problems = allProblems.filter((p) => p.companyTags.includes(company));
 
   if (problems.length === 0) notFound();
