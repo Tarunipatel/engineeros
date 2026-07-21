@@ -18,7 +18,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!login|register|api/admin/migrate-production|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|icon|apple-icon).*)",
-  ],
+  matcher: ["/((?!login|register|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|icon|apple-icon).*)"],
 };
